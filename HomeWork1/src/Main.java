@@ -21,7 +21,7 @@ public class Main {
         ImmutableHolder h2 = new ImmutableHolder("002", original, originalTags);
         // Проверки
         System.out.println("После попыток изменения: " + holder);
-        System.out.println("Первый холдер" + " " + h2 + " "+ "Второй холдер" +" "+ h1);
+        System.out.println("Первый холдер " + h2 + " Второй холдер " + h1);
         System.out.println(h1.equals(h2));
         System.out.println(h1.hashCode() == h2.hashCode());
     }
