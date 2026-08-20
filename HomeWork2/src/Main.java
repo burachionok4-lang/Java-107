@@ -1,42 +1,42 @@
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        List<Book> student1Book = new ArrayList();
-        student1Book.add(new Book("Book1", LocalDate.of(2002,3,20),300));
-        student1Book.add(new Book("Book2",LocalDate.of(1970,3,20), 2));
-        student1Book.add(new Book("Book3",LocalDate.of(2006,3,20), 500));
-        student1Book.add(new Book("Book4",LocalDate.of(2018,3,20), 600));
-        student1Book.add(new Book("Book5",LocalDate.of(2002,3,20), 534));
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
 
-        List<Book> student2Book = new ArrayList();
-        student2Book.add(new Book("Book6", LocalDate.of(2005,3,20),253));
-        student2Book.add(new Book("Book",LocalDate.of(2009,3,20), 244));
-        student2Book.add(new Book("Book7",LocalDate.of(2006,3,20), 466));
-        student2Book.add(new Book("Book8",LocalDate.of(2026,3,20), 987));
-        student2Book.add(new Book("Book",LocalDate.of(2009,3,20), 244));
-
-        List<Student> students = new ArrayList();
-        students.add(new Student("Nikita",student1Book));
-        students.add(new Student("Volodya",student2Book));
+        File jsonStudent = new File("src/students.json");
+        List<Student> students = new ArrayList<>();
+        try {
+            students = mapper.readValue(jsonStudent, new TypeReference<List<Student>>() {});
+        } catch (IOException e) {
+            System.err.println("Ошибка: " + e.getMessage());
+        }
         Optional<Integer> sortedBooks = students.stream()
                 .filter(Objects::nonNull)
-                .peek(System.out::println)
-                .peek(student -> System.out.println(student.getStudentBook()))
-                .flatMap(student -> student.getStudentBook().stream())
+                .peek(System.out::println)                          // 1. Вывод студента
+                .peek(student -> System.out.println(student.getStudentBook())) // 2. Список книг
+                .flatMap(student -> student.getStudentBook().stream()) // 3. Получение книг
                 .filter(Objects::nonNull)
-                .distinct()
-                .peek(book -> System.out.println(book.getBookName()))
-                .filter(book -> book.getReleaseDate() != null && book.getReleaseDate().getYear() >= 2000)
-                .sorted(Comparator.comparingInt(Book::getPageCount))
-                .limit(3)
-                .map(Book::getReleaseDate)
-                .map(LocalDate::getYear)
-                .findFirst();
+                .distinct()                                         // 4. Уникальные книги
+                .peek(book -> System.out.println(book.getBookName())) // 5. Названия книг
+                .filter(book -> book.getReleaseDate() != null
+                        && book.getReleaseDate().getYear() >= 2000) // 7. Фильтр после 2000
+                .sorted(Comparator.comparingInt(Book::getPageCount)) // 8. Сортировка по страницам
+                .limit(3)                                    // 9. Ограничение 3
+                .map(Book::getReleaseDate)                          // 10. Получить даты
+                .map(LocalDate::getYear)                            // 8. Преобразовать в год
+                .findFirst();                                       // 9. Короткое замыкание -> Optional
         sortedBooks.ifPresentOrElse(
                 System.out::println,
                 () -> System.out.println("Книги отсутствуют")
         );
-        }
     }
+}
