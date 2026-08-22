@@ -42,7 +42,10 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book that = (Book) o;
-        return bookName.equals(that.bookName) && releaseDate.equals(that.releaseDate) && pageCount == that.pageCount;
+        return Objects.equals(bookName,that.bookName)
+                && Objects.equals(releaseDate,that.releaseDate)
+                && pageCount == that.pageCount;
+                
     }
 
     @Override

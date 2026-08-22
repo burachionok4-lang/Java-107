@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Student {
     private String studentName;
-    private List<Book> studentBook = new ArrayList();
+    private List<Book> studentBook = new ArrayList<>();
 
     public Student(String studentName, List<Book> studentBook) {
         this.studentName = studentName;
